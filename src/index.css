@@ -1,3 +1,69 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply px-10 py-8 text-gray-900 dark:text-gray-200 dark:bg-gray-900;
+    }
+
+    header, main {
+        @apply md:container mx-auto flex flex-col items-center;
+    }
+
+    main {
+        @apply mt-5;
+    }
+
+    h1 {
+        @apply font-bold text-3xl;
+    }
+
+    input {
+        @apply mt-1 px-3 py-2 text-black bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-96 rounded-md sm:text-sm focus:ring-1 mb-10;
+    }
+}
+
+@layer components {
+    .card {
+        @apply w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 relative z-0;
+    }
+
+    .card .avatar {
+        @apply w-24 h-24 mb-3 rounded-full shadow-lg;
+    }
+
+    .card .background-image {
+        @apply absolute top-4 -z-10 left-2/4;
+    }
+
+    .card .background-image img {
+        @apply relative h-36 -left-2/4 blur-xl rounded-full;
+    }
+
+    .card .stats {
+        @apply grid grid-cols-3 grid-flow-row mt-6 bg-slate-200 dark:bg-slate-400 p-5 rounded-2xl;
+    }
+
+    .card .stats>*:not(:nth-child(3n)) {
+        @apply border-r-2 border-green-500 dark:border-green-300 border-opacity-30 pr-2;
+    }
+
+    .card .stats>*:not(:nth-child(3n + 1)) {
+        @apply pl-2;
+    }
+}
+
+@layer utilities {
+    .card h5 {
+        @apply mb-1 text-xl font-medium text-gray-900 dark:text-white;
+    }
+
+    .card .gray {
+        @apply text-sm text-gray-500 dark:text-gray-400;
+    }
+
+    .card .container {
+        @apply flex flex-col items-center py-10 z-10;
+    }
+}
