@@ -4,33 +4,31 @@ import {toast} from "react-toastify";
 import GithubUser from "../models/github_user.ts";
 import {Link, useSearchParams} from "react-router-dom";
 import DefaultSpinner from "../core/DefaultSpinner.tsx";
+import toast_conf from "../common/toast_conf.ts";
+import useDebounce from "../common/use_debounce.ts";
 
 const DEFAULT_USER = "Narkobaron15";
+const timeout = 700
 
 export default function Home() {
     const [searchParams, setSearchParams] = useSearchParams()
-
     const u = searchParams.get('user')
+
     const [username, setUsername] = useState(u && u.length > 0 ? u : DEFAULT_USER)
     const [user, setUser] = useState<GithubUser>()
+    const debouncedUsername = useDebounce(username, timeout)
 
     useEffect(() => {
-        http_common.get(username)
+        if (!debouncedUsername || !debouncedUsername.trim().length) return
+
+        http_common.get(debouncedUsername.trim())
             .then((response) => {
                 setUser(response.data)
             })
             .catch(() => {
-                toast.error(`Can't load data for @${username}!`, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                })
+                toast.error(`Can't load data for @${debouncedUsername}!`, toast_conf)
             })
-    }, [username]);
+    }, [debouncedUsername]);
 
     if (!user) return <DefaultSpinner/>
 
@@ -78,7 +76,7 @@ export default function Home() {
                     <span className="gray mt-4 space-x-3 md:mt-6">
                     {user.bio}
                 </span>
-                    <div className="stats">
+                    <div className="stats mt-6">
                         <span className="font-bold">
                             <Link target="_blank" to={user.html_url + '?tab=followers'}>
                                 {user.followers}
