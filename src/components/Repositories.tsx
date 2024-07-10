@@ -22,19 +22,22 @@ export default function Repositories() {
     const [page, setPage] = useState(1)
     const [more, setMore] = useState(true)
 
+    const load = async () => {
+        try {
+            const {data} = await http_common.get(`${debouncedUsername.trim()}/repos`, {
+                params: {page}
+            })
+            setRepos([...repos || [], ...data])
+            if (data.length < 30) setMore(false)
+            else setPage(page + 1)
+        } catch (e) {
+            toast.error(`Can't load data for @${debouncedUsername}!`, toast_conf)
+        }
+    }
+
     useEffect(() => {
         if (!debouncedUsername || !debouncedUsername.trim().length) return
-        http_common.get(`${debouncedUsername.trim()}/repos`, {
-            params: {page}
-        })
-            .then(({data}) => {
-                setRepos([...repos || [], ...data])
-                if (data.length < 30) setMore(false)
-                else setPage(page + 1)
-            })
-            .catch(() => {
-                toast.error(`Can't load data for @${debouncedUsername}!`, toast_conf)
-            })
+        load().catch(console.error)
     }, [debouncedUsername])
 
     if (!repos) return <DefaultSpinner/>
@@ -62,10 +65,10 @@ export default function Repositories() {
             <div className="card text-center py-10">
                 {repos.map(r => <RepoCard repo={r} key={r.id}/>)}
                 <div className="flex justify-center mt-8">
-                    <button disabled={!more} className="pill">
+                    <button disabled={!more} className="pill" onClick={load}>
                         Load more
                     </button>
-                    <Link to="/" className="pill ml-2">
+                    <Link to={username.length ? `/?user=${username}` : '/'} className="pill ml-2">
                         Go back
                     </Link>
                 </div>

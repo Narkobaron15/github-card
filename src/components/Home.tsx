@@ -88,7 +88,7 @@ export default function Home() {
                             </Link>
                         </span>
                         <span className="font-bold">
-                            <Link target="_blank" to={`/repos?user=${username}`}>
+                            <Link to={`/repos?user=${username}`}>
                                 {user.public_repos}
                             </Link>
                         </span>
