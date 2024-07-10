@@ -22,12 +22,15 @@ export default function Repositories() {
     const [page, setPage] = useState(1)
     const [more, setMore] = useState(true)
 
-    const load = async () => {
+    const load = async (invalidate: boolean = false) => {
         try {
             const {data} = await http_common.get(`${debouncedUsername.trim()}/repos`, {
-                params: {page}
+                params: {page},
             })
-            setRepos([...repos || [], ...data])
+
+            if (invalidate) setRepos(data)
+            else setRepos([...repos || [], ...data])
+
             if (data.length < 30) setMore(false)
             else setPage(page + 1)
         } catch (e) {
@@ -37,7 +40,7 @@ export default function Repositories() {
 
     useEffect(() => {
         if (!debouncedUsername || !debouncedUsername.trim().length) return
-        load().catch(console.error)
+        load(true).catch(console.error)
     }, [debouncedUsername])
 
     if (!repos) return <DefaultSpinner/>
@@ -46,7 +49,7 @@ export default function Repositories() {
         <div className="card text-center py-10">
             <h5>No public repositories found</h5>
             <Link to="/"
-                className="text-blue-500 hover:text-blue-600 active:text-blue-800">
+                  className="text-blue-500 hover:text-blue-600 active:text-blue-800">
                 Go back
             </Link>
         </div>
@@ -65,9 +68,12 @@ export default function Repositories() {
             <div className="card text-center py-10">
                 {repos.map(r => <RepoCard repo={r} key={r.id}/>)}
                 <div className="flex justify-center mt-8">
-                    <button disabled={!more} className="pill" onClick={load}>
-                        Load more
-                    </button>
+                    {more &&
+                        <button disabled={!more} className="pill"
+                                onClick={() => load(false)}>
+                            Load more
+                        </button>
+                    }
                     <Link to={username.length ? `/?user=${username}` : '/'} className="pill ml-2">
                         Go back
                     </Link>

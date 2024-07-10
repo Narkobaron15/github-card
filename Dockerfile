@@ -2,13 +2,10 @@
 FROM node:latest
 
 # Define the environment variable
-ARG VITE_API_KEY
 ARG PORT=8080
 
 # Set the environment variable
-
 ENV PORT=$PORT
-ENV VITE_API_KEY=$VITE_API_KEY
 
 # Set the working directory
 WORKDIR /app
